@@ -1,22 +1,13 @@
-version: '3.8'
-
 services:
   blizzquiz-web:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: node:18-bullseye
     container_name: blizzquiz-web
     restart: always
     volumes:
-      - ./frontend:/app
+      - .:/app
+    working_dir: /app
     ports:
       - "8081:3000"
+    command: sh -c "npm install && npm start"
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-    networks:
-      - blizzquiz-network
-
-networks:
-  blizzquiz-network:
-    driver: bridge
