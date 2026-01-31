@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  blizzquiz-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: blizzquiz-web
+    restart: always
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8081:3000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - blizzquiz-network
+
+networks:
+  blizzquiz-network:
+    driver: bridge
