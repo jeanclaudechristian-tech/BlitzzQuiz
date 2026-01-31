@@ -8,6 +8,12 @@ jobs:
       - name: Checkout Mobile
         uses: actions/checkout@v4
 
+      - name: Prep Environment
+        run: |
+          if ! command -v rsync >/dev/null 2>&1; then
+            apk update && apk add nodejs npm rsync
+          fi
+
       - name: Sync Mobile Code
         run: |
           mkdir -p /DevMultiRuntime/BlizzQuiz/mobile/
