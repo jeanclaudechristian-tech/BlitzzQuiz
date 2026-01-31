@@ -1,5 +1,5 @@
 name: Deploy BlizzQuiz Separately
-on: [mirror_sync]
+on: [push mirror_sync workflow_dispatch]
 
 jobs:
   deploy-mobile:
