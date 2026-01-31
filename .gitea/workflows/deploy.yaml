@@ -12,8 +12,3 @@ jobs:
         run: |
           mkdir -p /DevMultiRuntime/BlizzQuiz/mobile/
           rsync -av --delete --exclude='node_modules' ./mobile/ /DevMultiRuntime/BlizzQuiz/mobile/
-
-      - name: Run Expo Container
-        run: |
-          mkdir -p /DevMultiRuntime/BlizzQuiz/mobile/
-          rsync -av --delete --exclude='node_modules' ./mobile/ /DevMultiRuntime/BlizzQuiz/mobile/
