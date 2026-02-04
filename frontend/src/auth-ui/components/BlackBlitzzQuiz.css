@@ -1,0 +1,28 @@
+.black-blitzz-quiz {
+  width: 100%;
+  max-width: 402px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  flex-shrink: 0;
+}
+
+.logo-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .black-blitzz-quiz {
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .black-blitzz-quiz {
+    max-width: 280px;
+  }
+}

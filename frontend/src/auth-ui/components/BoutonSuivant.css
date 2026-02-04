@@ -1,0 +1,49 @@
+.bouton-suivant {
+  background-color: #24201d;
+  display: flex;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 72px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 328px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bouton-suivant:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.bouton-suivant:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .bouton-suivant {
+    max-width: 100%;
+    padding: 0 40px;
+  }
+}
+
+.button-text {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  justify-content: center;
+  line-height: 0;
+  color: #f6feff;
+  font-size: 16px;
+  text-align: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.button-text p {
+  line-height: normal;
+  margin: 0;
+}
