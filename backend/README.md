@@ -1,71 +1,91 @@
-<p align="center">
-  <a href="https://laravel.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
-  </a>
-</p>
+# ⚡ BlizzQuiz - Noyau Backend
 
-<p align="center">
-  <a href="https://github.com/laravel/framework/actions">
-    <img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status">
-  </a>
-  <a href="https://packagist.org/packages/laravel/framework">
-    <img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads">
-  </a>
-  <a href="https://packagist.org/packages/laravel/framework">
-    <img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version">
-  </a>
-  <a href="https://packagist.org/packages/laravel/framework">
-    <img src="https://img.shields.io/packagist/l/laravel/framework" alt="License">
-  </a>
-</p>
+[![Docker](https://img.shields.io/badge/Déploiement-Docker_Ready-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+![Laravel](https://img.shields.io/badge/Laravel-12.49.0-FF2D20?style=flat&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.2.12-777BB4?style=flat&logo=php)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Connecté-4169E1?style=flat&logo=postgresql)
 
-## About Laravel
+## 📖 À propos du Projet
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Ce dépôt contient le cœur du système **BlizzQuiz**, une API RESTful haute performance conçue avec **Laravel 12**. Le projet est structuré pour un environnement conteneurisé via **Docker**, garantissant une isolation optimale.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠 Spécifications Techniques
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* **Architecture** : Basée sur Docker (Laravel, PostgreSQL, Redis).
+* **Backend** : Laravel 12.49.0 (PHP 8.2.12 ZTS).
+* **Base de données** : PostgreSQL 16+ avec contraintes d'unicité pour Google/Apple ID.
+* **Sécurité** : Validation des Tokens JWT pour l'authentification tierce.
 
-## Learning Laravel
+## 🚀 Guide de Démarrage (Environnement de Développement)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Configuration Initiale
+* **Clonage** : 
+```markdown
+git clone https://github.com/jeanclaudechristian-tech/BlitzzQuiz.git
+```
+* **Variables d'environnement** : Copier `.env.example` et le renommer en `.env`.
+* **Ajustement** : Configurer les accès PostgreSQL dans le fichier `.env`.
+#### example：
+```markdown
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=blizzquiz
+DB_USERNAME=postgres
+DB_PASSWORD=blizzPassword
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Configuration de PHP
+* **Vérification** : `php -v`. La version doit être **8.2.12** ou supérieure.
+* **Si vous n'avez pas de php ou a un version ancienne:** https://windows.php.net/download/#php-8.2
+* **Remplacement** : Si PHP est déjà installé, remplacer le dossier de l'ancienne version par la nouvelle version ZTS.
+* **Si la commande `php -v` n'est pas reconnue, suivez ces étapes pour configurer Windows :** 
+---
+##### Étape 1 : Recherche
+* Appuyez sur la touche `Windows`, tapez `Modifier les variables d'environnement système` et ouvrez le premier résultat.
+##### Étape 2 : Accès aux Variables
+* Dans l'onglet *Paramètres système avancés*, cliquez sur le bouton `Variables d'environnement...` en bas à droite.
+##### Étape 3 : Modification du Path
+* Dans la section *Variables système* (en bas), sélectionnez la ligne `Path` et cliquez sur `Modifier...`.
+##### Étape 4 : Ajout du chemin
+* Cliquez sur `Nouveau` et collez le chemin vers votre dossier PHP
+---
+* **Configuration (php.ini)** :
+    * Copier `php.ini-development` (ou `php.ini-production`) et le renommer en `php.ini`.
+    * Décommenter les extensions : `extension=pdo_pgsql`, `extension=pgsql`, `extension=openssl`, `extension=mbstring`, `extension=fileinfo`.
+    * Décommenter la ligne `extension_dir = "ext"`.
 
-## Laravel Sponsors
+### 3. Gestionnaire de Dépendances (Composer)
+Si la commande n'est pas reconnue, installer via https://getcomposer.org/download/
+```bash 
+# Vérifier si Composer est installé
+composer -v
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Installer les dépendances du projet (nécessite le fichier composer.json)
+composer install
 
-### Premium Partners
+# Générer la clé de sécurité de l'application Laravel
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 4. Base de Données (PostgreSQL)
+* **Vérification** : S'assurer que PostgreSQL est installé et actif sur le port 5432.
+* **Lien de téléchargement** : [postgresql.org](https://www.postgresql.org/download/).
+* ***Vous devez avoir les mêmes
+  `DB_USERNAME`
+  `DB_PASSWORD`
+dans `.env`***
+* **Création manuelle (via pgAdmin 4)** :
+    * Si la base n'existe pas, faire un clic droit sur *Databases* > *Create* > *Database...*
+    * Nommer la base selon la valeur `DB_DATABASE` de votre `.env`.
+* **Migration** : `php artisan migrate`.
 
-## Contributing
+### 5. Lancement
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+## démarrage
+php artisan serve
+```
+* **Accès** : L'API est disponible sur `http://127.0.0.1:8000`.
+---
+*Si il y a des question contacter Siyuan(Contributeur DDdemonG) via Email(voir profile), Mio, teams(rarement présent) ou discord(DDdemonG#4483)*
