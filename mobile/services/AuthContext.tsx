@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (token) {
                 const response = await api.get('/user');
                 setUser(response.data);
+                router.replace("/(tabs)/Home")
             }
         } catch (e) {
             await SecureStore.deleteItemAsync('auth_token');
@@ -40,20 +41,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const login = async (email: string, password: string) => {
-        console.log("🔥 [1] AuthContext: login 被调用了！"); // <--- 加这句
+        console.log("🔥 [1] AuthContext: login 被调用了！");
         setIsLoading(true);
         try {
-            console.log("🔥 [2] AuthContext: 准备调用 api.post"); // <--- 加这句
+            console.log("🔥 [2] AuthContext: 准备调用 api.post");
             const response = await api.post('/login', { email, password });
-            console.log("🔥 [3] AuthContext: api.post 返回了"); // <--- 加这句
+            console.log("🔥 [3] AuthContext: api.post 返回了，后端验证通过！");
+
+            // 1. 打印看看后端到底给了什么
+            console.log("📦 后端数据:", response.data);
+
             const { user, token } = response.data;
+
+            // 2. 检查 Token 是否存在
+            if (!token) {
+                throw new Error("后端没返回 Token！");
+            }
+
+            console.log("💾 正在保存 Token...");
             await SecureStore.setItemAsync('auth_token', token);
+            console.log("✅ Token 保存完毕");
+
             setUser(user);
-            // @ts-ignore
-            router.replace('/(tabs)');
+
+            // 3. 关键修改：尝试跳转到根路径 '/'，而不是 '(tabs)'
+            // 因为我怀疑你可能还没有写好 (tabs) 页面，导致导航失败
+            console.log("🚗 准备跳转到首页...");
+            router.replace('/(tabs)/Home');
+
         } catch (error: any) {
-            console.log(error.response?.data);
-            Alert.alert('Erreur', error.response?.data?.message || 'Login failed');
+            console.log("💥 [AuthContext] 登录后续处理失败:", error);
+            Alert.alert('Erreur', error.message || 'Login failed');
             throw error;
         } finally {
             setIsLoading(false);
