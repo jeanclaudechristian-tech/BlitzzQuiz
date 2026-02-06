@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from "react"; // 引入 useCallback
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useRouter, useFocusEffect } from "expo-router"; // 关键：引入 useFocusEffect
+import React, { useState, useCallback } from "react";
+import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
 import Animated, { Layout, SlideInUp, SlideOutDown } from "react-native-reanimated";
+// 引入 AuthContext
+import { useAuth } from "../../services/AuthContext";
 import { InputField } from "../../components/blitzz/InputField";
 import { PrimaryButton } from "../../components/blitzz/PrimaryButton";
 import { DarkButton } from "../../components/blitzz/DarkButton";
@@ -15,28 +17,43 @@ import { colors, fonts } from "../../components/blitzz/tokens";
 
 export default function LoginScreen() {
     const router = useRouter();
+    // 1. 获取登录方法
+    const { login } = useAuth();
+
+    // 2. 定义输入框状态
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
     const [isVisible, setIsVisible] = useState(true);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [isLoggingInGoogle, setIsLoggingInGoogle] = useState(false);
     const [isLoggingInApple, setIsLoggingInApple] = useState(false);
 
-    const handleLogin = () => {
-        // A. 开始加载（转圈）
+    // 每次页面获得焦点时重置可见性 (保证返回时有动画)
+    useFocusEffect(
+        useCallback(() => {
+            setIsVisible(true);
+        }, [])
+    );
+
+    // 3. 真实登录逻辑
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert("Erreur", "Veuillez entrer votre courriel et mot de passe.");
+            return;
+        }
+
         setIsLoggingIn(true);
-
-        // B. 模拟 API 请求
-        setTimeout(() => {
-            // C. 请求结束，停止转圈
+        try {
+            // 调用 API，AuthContext 会处理成功后的跳转
+            await login(email, password);
+        } catch (e) {
+            // 失败只停止转圈，AuthContext 已经弹窗提示错误了
             setIsLoggingIn(false);
-
-            // D. 关键修正：这里不要直接 router.push，而是调用 handleNav
-            // 这样才能触发 setIsVisible(false) 让页面掉下去！
-            handleNav("/auth/RegisterScreen");
-
-        }, 2000); // 模拟 1.5秒延迟
+        }
     };
 
-    // Google
+    // Google 登录模拟 (后续可接 SDK)
     const handleGoogleLogin = () => {
         setIsLoggingInGoogle(true);
         setTimeout(() => {
@@ -45,7 +62,7 @@ export default function LoginScreen() {
         }, 1500);
     };
 
-    // Apple
+    // Apple 登录模拟
     const handleAppleLogin = () => {
         setIsLoggingInApple(true);
         setTimeout(() => {
@@ -54,33 +71,19 @@ export default function LoginScreen() {
         }, 1500);
     };
 
-    // 核心修复：每次页面“获得焦点”（从别的页面回来）时，重置为可见
-    useFocusEffect(
-        useCallback(() => {
-            setIsVisible(true);
-
-            // 可选：return 一个清理函数，在失去焦点时做点什么
-            // 这里我们不需要，因为 handleNav 已经处理了离场逻辑
-        }, [])
-    );
-
     const handleNav = (path: string) => {
-        setIsVisible(false); // 触发掉落退出
+        setIsVisible(false); // 触发掉落动画
         setTimeout(() => {
             router.push(path as any);
         }, 900);
     };
 
     return (
-        <Animated.View
-            style={{ flex: 1 }}
-            layout={Layout.springify()}
-        >
+        <Animated.View style={{ flex: 1 }} layout={Layout.springify()}>
             <View style={styles.mainWrapper}>
                 <ScrollView contentContainerStyle={styles.container}>
                     <View style={styles.headerSpacer} />
 
-                    {/* 只有 isVisible 为 true 时才渲染 */}
                     {isVisible && (
                         <>
                             <Animated.View
@@ -98,8 +101,13 @@ export default function LoginScreen() {
                                     exiting={SlideOutDown.delay(350).duration(500)}
                                 >
                                     <InputField
-                                        placeholder="Nom d’utilisateur"
+                                        placeholder="Nom d’utilisateur" // 这里建议改成 Courriel
                                         leftIcon={<IconSvg uri={assets.userIcon} width={24} height={24} />}
+                                        // 绑定数据
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
                                     />
                                 </Animated.View>
 
@@ -114,6 +122,9 @@ export default function LoginScreen() {
                                         secureTextEntry
                                         leftIcon={<IconSvg uri={assets.passwordIcon} width={24} height={24} />}
                                         rightIcon={<IconSvg uri={assets.eyeIcon} width={24} height={24} />}
+                                        // 绑定数据
+                                        value={password}
+                                        onChangeText={setPassword}
                                     />
                                 </Animated.View>
 
@@ -136,7 +147,8 @@ export default function LoginScreen() {
                                 >
                                     <PrimaryButton
                                         label="Connexion"
-                                        onPress={() => handleNav("/(tabs)")}
+                                        onPress={handleLogin} // 绑定点击事件
+                                        isLoading={isLoggingIn} // 绑定加载状态
                                     />
                                 </Animated.View>
 
@@ -154,8 +166,8 @@ export default function LoginScreen() {
                                 >
                                     <DarkButton
                                         label="Créer un compte"
-                                        onPress={handleLogin}
-                                        isLoading={isLoggingIn}
+                                        // 注册不需要 Loading，直接跳转
+                                        onPress={() => handleNav("/auth/RegisterScreen")}
                                     />
                                 </Animated.View>
 
@@ -168,7 +180,7 @@ export default function LoginScreen() {
                                     <DarkButton
                                         label="Inscription avec Apple"
                                         icon={<AppleIcon />}
-                                        onPress={() => handleAppleLogin()}
+                                        onPress={handleAppleLogin}
                                         isLoading={isLoggingInApple}
                                     />
                                 </Animated.View>
@@ -182,7 +194,7 @@ export default function LoginScreen() {
                                     <DarkButton
                                         label="Inscription with Google"
                                         icon={<GoogleIcon />}
-                                        onPress={() => handleGoogleLogin()}
+                                        onPress={handleGoogleLogin}
                                         isLoading={isLoggingInGoogle}
                                     />
                                 </Animated.View>

@@ -1,23 +1,44 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  ActivityIndicator // 1. 引入组件
+} from "react-native";
 import { colors, sizes, fonts } from "./tokens";
 
 type PrimaryButtonProps = {
   label: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
-  onPress?: () => void; // 1. 在类型定义中添加 onPress
+  onPress?: () => void;
+  isLoading?: boolean; // 2. 新增属性
 };
 
-export function PrimaryButton({ label, style, textStyle, onPress }: PrimaryButtonProps) {
+export function PrimaryButton({
+                                label,
+                                style,
+                                textStyle,
+                                onPress,
+                                isLoading = false // 默认为 false
+                              }: PrimaryButtonProps) {
   return (
-      // 2. 将 onPress 传给 TouchableOpacity
       <TouchableOpacity
-          style={[styles.button, style]}
+          // 3. 加载时稍微变淡，提供视觉反馈
+          style={[styles.button, style, isLoading && { opacity: 0.8 }]}
           onPress={onPress}
           activeOpacity={0.7}
+          // 4. 加载中禁止点击，防止重复提交
+          disabled={isLoading}
       >
-        <Text style={[styles.text, textStyle]}>{label}</Text>
+        {isLoading ? (
+            // 5. 显示白色转圈动画
+            <ActivityIndicator color={colors.light} />
+        ) : (
+            <Text style={[styles.text, textStyle]}>{label}</Text>
+        )}
       </TouchableOpacity>
   );
 }

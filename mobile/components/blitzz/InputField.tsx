@@ -1,19 +1,25 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { View, TextInput, StyleSheet, TouchableOpacity, TextInputProps } from "react-native";
 import { colors, sizes, fonts } from "./tokens";
 import { IconSvg } from "./IconSvg";
 import { assets } from "./assets";
-// 1. 引入新做的动画组件
 import { AnimatedSlashEye } from "./AnimatedSlashEye";
 
-type InputFieldProps = {
+// 1. 定义 Props：继承原生 TextInput 的所有属性
+type InputFieldProps = TextInputProps & {
   placeholder: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   secureTextEntry?: boolean;
 };
 
-export function InputField({ placeholder, leftIcon, rightIcon, secureTextEntry }: InputFieldProps) {
+export function InputField({
+                             placeholder,
+                             leftIcon,
+                             rightIcon,
+                             secureTextEntry,
+                             ...props // 2. 接收 value, onChangeText 等剩余参数
+                           }: InputFieldProps) {
   const [isSecure, setIsSecure] = useState(!!secureTextEntry);
 
   const toggleSecureEntry = () => {
@@ -22,7 +28,7 @@ export function InputField({ placeholder, leftIcon, rightIcon, secureTextEntry }
 
   const renderRightIcon = () => {
     if (secureTextEntry) {
-      // 定义基础的睁眼图标
+      // 这里的 IconSvg 已经去掉了 color 属性，修复了 TS 报错
       const baseEyeIcon = rightIcon || (
           <IconSvg uri={assets.eyeIcon} width={24} height={24} />
       );
@@ -31,13 +37,12 @@ export function InputField({ placeholder, leftIcon, rightIcon, secureTextEntry }
           <TouchableOpacity
               style={styles.iconButton}
               onPress={toggleSecureEntry}
-              activeOpacity={1} // 点击时不改变透明度，让动画自己表现
+              activeOpacity={1}
           >
-            {/* 2. 使用动画组件包裹 */}
             <AnimatedSlashEye
-                isActive={isSecure} // 注意取反：isSecure为false时，isActive为true(要画杠)
+                isActive={isSecure}
                 baseIcon={baseEyeIcon}
-                color={colors.dark} // 确保杠的颜色和图标一致
+                color={colors.dark}
                 size={24}
             />
           </TouchableOpacity>
@@ -51,25 +56,19 @@ export function InputField({ placeholder, leftIcon, rightIcon, secureTextEntry }
     return null;
   };
 
-  // @ts-ignore
   return (
       <View style={styles.container}>
         <View style={styles.iconBox}>{leftIcon}</View>
         <TextInput
             placeholder={placeholder}
             placeholderTextColor={colors.secondaryText}
-            // 4. 核心：使用内部状态 isSecure 控制显示，而不是死板的 props
             secureTextEntry={isSecure}
+            style={styles.input}
             allowFontScaling={false}
-            // @ts-ignore
-            includeFontPadding={false}
             textAlignVertical="center"
-            // 记得在这里也禁掉 lineHeight，保持你的完美修复
-            // @ts-ignore
-            style={[styles.input, { lineHeight: undefined }]}
+            // 3. 关键：把外部传入的 value 和 onChangeText 绑定到底层输入框
+            {...props}
         />
-
-        {/* 渲染右侧区域 */}
         {renderRightIcon()}
       </View>
   );
@@ -90,7 +89,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  // 新增：专门给点击区域用的样式，保持和大盒子一致的尺寸
   iconButton: {
     width: 50,
     height: "100%",
