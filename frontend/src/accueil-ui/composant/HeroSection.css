@@ -3,6 +3,7 @@
   padding: clamp(40px, 10vw, 80px) clamp(16px, 3vw, 24px);
   position: relative;
   overflow: hidden;
+  height: 800px;
 }
 
 .hero-video-background {
@@ -22,7 +23,6 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(80, 202, 255, 0.6);
 }
 
 .hero-content {
