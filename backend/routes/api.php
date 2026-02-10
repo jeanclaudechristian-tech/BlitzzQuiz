@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuizController;
 
+Route::get('auth/google/redirect', [AuthController::class, 'googleRedirect']);
+
 Route::post('auth/google/callback', [AuthController::class, 'googleCallback']);
 
 Route::post('register', [AuthController::class, 'register']);
