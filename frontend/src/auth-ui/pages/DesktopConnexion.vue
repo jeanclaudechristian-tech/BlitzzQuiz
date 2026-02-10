@@ -36,6 +36,7 @@ import BoutonConnexion from '../components/BoutonConnexion.vue'
 import Diviseur from '../components/Diviseur.vue'
 import BoutonCreerUnCompte from '../components/BoutonCreerUnCompte.vue'
 import BoutonGoogle from '../components/BoutonGoogle.vue'
+import { authService } from '../../API/auth'
 
 export default {
   name: 'DesktopConnexion',
@@ -52,19 +53,58 @@ export default {
   data() {
     return {
       formData: {
-        username: '',
+        username: '', // Sera utilisé comme email
         password: ''
-      }
+      },
+      loading: false,
+      error: null
     }
   },
   methods: {
-    handleConnexion() {
-      console.log('Connexion:', this.formData)
-      // Add your login logic here
+    async handleConnexion() {
+      // Validation basique
+      if (!this.formData.username || !this.formData.password) {
+        alert('Veuillez remplir tous les champs')
+        return
+      }
+
+      this.loading = true
+      this.error = null
+
+      try {
+        // Appel API de connexion
+        const data = await authService.login(
+          this.formData.username, // email
+          this.formData.password
+        )
+
+        // Sauvegarde le token et l'utilisateur
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
+
+        console.log('Connexion réussie:', data.user)
+
+        // Redirection vers le dashboard (adapte selon ta route)
+        this.$router.push('/dashboard')
+
+      } catch (error) {
+        console.error('Erreur de connexion:', error)
+        
+        if (error.response?.status === 422) {
+          this.error = 'Email ou mot de passe incorrect'
+        } else {
+          this.error = 'Erreur de connexion. Réessayez plus tard.'
+        }
+        
+        alert(this.error)
+      } finally {
+        this.loading = false
+      }
     }
   }
 }
 </script>
+
 
 <style scoped>
 @import './DesktopConnexion.css';

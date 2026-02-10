@@ -26,6 +26,7 @@ import BlackBlitzzQuiz from '../components/BlackBlitzzQuiz.vue'
 import DropdownNiveauEtude from '../components/DropdownNiveauEtude.vue'
 import BoutonSuivant from '../components/BoutonSuivant.vue'
 import BoutonRetour from '../components/BoutonRetour.vue'
+import { useRegistrationStore } from '../../stores/registration'
 
 export default {
   name: 'DesktopInscriptionPage1',
@@ -35,13 +36,26 @@ export default {
     BoutonSuivant,
     BoutonRetour
   },
+  setup() {
+    const registrationStore = useRegistrationStore()
+    return { registrationStore }
+  },
   data() {
     return {
-      niveauEtude: ''
+      niveauEtude: this.registrationStore.niveauEtude || ''
     }
   },
   methods: {
     goToInscriptionDetails() {
+      if (!this.niveauEtude) {
+        alert('Veuillez sélectionner un niveau d\'étude')
+        return
+      }
+
+      // Sauvegarde dans le store
+      this.registrationStore.setNiveauEtude(this.niveauEtude)
+
+      // Va vers la page 2
       this.$router.push('/inscription/details')
     },
     goToConnexion() {
@@ -50,6 +64,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 @import './DesktopInscriptionPage1.css';
