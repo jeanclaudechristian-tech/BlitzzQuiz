@@ -89,6 +89,13 @@
   margin: 0;
 }
 
+.error-msg {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #c0392b;
+  margin: -8px 0 8px 0;
+}
+
 /* tes classes spécifiques */
 .bouton-retour-position {
   margin-top: 4px;

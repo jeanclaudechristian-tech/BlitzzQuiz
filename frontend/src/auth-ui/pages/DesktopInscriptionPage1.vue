@@ -15,7 +15,7 @@
         </div>
         <DropdownNiveauEtude v-model="niveauEtude" />
         <BoutonSuivant @click="goToInscriptionDetails" />
-        <BoutonRetour text="Page de connexion" @click="goToConnexion" />
+        <BoutonRetour text="Retour" @click="goToChoixRole" />
       </div>
     </div>
   </div>
@@ -42,10 +42,10 @@ export default {
   },
   methods: {
     goToInscriptionDetails() {
-      this.$router.push('/inscription/details')
+      this.$router.push({ path: '/inscription/details', query: { role: 'STUDENT' } })
     },
-    goToConnexion() {
-      this.$router.push('/connexion')
+    goToChoixRole() {
+      this.$router.push('/inscription')
     }
   }
 }

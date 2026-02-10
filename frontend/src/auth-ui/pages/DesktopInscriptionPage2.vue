@@ -20,8 +20,9 @@
         <InputNomUtilisateur v-model="formData.username" />
         <InputMotDePasse v-model="formData.password" placeholder="Mot de passe" />
         <InputConfirmerMotDePasse v-model="formData.confirmPassword" />
+        <p v-if="error" class="error-msg">{{ error }}</p>
         <BoutonRetour class="bouton-retour-position" @click="$router.back()" />
-        <BoutonConfirmer class="bouton-confirmer-position" @click="goToValidation" />
+        <BoutonConfirmer class="bouton-confirmer-position" @click="handleRegister" />
       </div>
     </div>
   </div>
@@ -54,12 +55,34 @@ export default {
         username: '',
         password: '',
         confirmPassword: ''
-      }
+      },
+      error: ''
+    }
+  },
+  computed: {
+    role() {
+      return this.$route.query.role === 'TEACHER' ? 'TEACHER' : 'STUDENT'
     }
   },
   methods: {
-    goToValidation() {
-      this.$router.push('/validation')
+    async handleRegister() {
+      this.error = ''
+      const { email, username, password, confirmPassword } = this.formData
+      if (!email || !username || !password || !confirmPassword) {
+        this.error = 'Veuillez remplir tous les champs.'
+        return
+      }
+      if (password !== confirmPassword) {
+        this.error = 'Les mots de passe ne correspondent pas.'
+        return
+      }
+      try {
+        const { register } = await import('../../api/auth.js')
+        await register(email, username, password, confirmPassword, this.role)
+        this.$router.push('/validation')
+      } catch (err) {
+        this.error = err.response?.data?.message ?? err.response?.data?.errors?.email?.[0] ?? err.response?.data?.errors?.username?.[0] ?? 'Erreur lors de l\'inscription.'
+      }
     }
   }
 }

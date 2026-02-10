@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../page/HomePage.vue'
 import DesktopConnexion from '../auth-ui/pages/DesktopConnexion.vue'
+import DesktopInscriptionChoixRole from '../auth-ui/pages/DesktopInscriptionChoixRole.vue'
 import DesktopInscriptionPage1 from '../auth-ui/pages/DesktopInscriptionPage1.vue'
 import DesktopInscriptionPage2 from '../auth-ui/pages/DesktopInscriptionPage2.vue'
 import DesktopCourriel from '../auth-ui/pages/DesktopCourriel.vue'
@@ -25,7 +26,12 @@ const routes = [
     },
     {
       path: '/inscription',
-      name: 'Inscription1',
+      name: 'InscriptionChoixRole',
+      component: DesktopInscriptionChoixRole
+    },
+    {
+      path: '/inscription/niveau',
+      name: 'InscriptionNiveau',
       component: DesktopInscriptionPage1
     },
     {

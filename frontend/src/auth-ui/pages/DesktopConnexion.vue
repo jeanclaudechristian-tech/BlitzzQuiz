@@ -17,6 +17,7 @@
         </div>
         <InputNomUtilisateur v-model="formData.username" />
         <InputMotDePasse v-model="formData.password" placeholder="Mot de passe" />
+        <p v-if="error" class="error-msg">{{ error }}</p>
         <BoutonMdpOublie />
         <BoutonConnexion @click="handleConnexion" />
         <Diviseur />
@@ -54,13 +55,28 @@ export default {
       formData: {
         username: '',
         password: ''
-      }
+      },
+      error: '',
+      loading: false
     }
   },
   methods: {
-    handleConnexion() {
-      console.log('Connexion:', this.formData)
-      // Add your login logic here
+    async handleConnexion() {
+      this.error = ''
+      if (!this.formData.username || !this.formData.password) {
+        this.error = 'Veuillez remplir tous les champs.'
+        return
+      }
+      this.loading = true
+      try {
+        const { login } = await import('../../api/auth.js')
+        await login(this.formData.username, this.formData.password)
+        this.$router.push('/succes')
+      } catch (err) {
+        this.error = err.response?.data?.message ?? err.response?.data?.errors?.username?.[0] ?? 'Identifiants incorrects.'
+      } finally {
+        this.loading = false
+      }
     }
   }
 }
